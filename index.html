@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Rocco Gets Home</title>
+<style>
+  :root {
+    --ink: #fff;
+    --shadow: 0 2px 24px rgba(0,0,0,.65), 0 1px 2px rgba(0,0,0,.8);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    background: #000;
+    overflow: hidden;
+  }
+  .bg {
+    position: fixed; inset: 0;
+    background-image: url("rocco.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+  }
+  .bg::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 70%, rgba(0,0,0,.75) 100%);
+  }
+  main {
+    position: relative; z-index: 1;
+    height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 24px;
+  }
+  h1 {
+    margin: 0 0 24px 0;
+    font-weight: 900;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    font-size: clamp(2.5rem, 9vw, 7rem);
+    text-shadow: var(--shadow);
+    line-height: 1;
+  }
+  .timer {
+    display: flex;
+    gap: clamp(12px, 3vw, 40px);
+    text-shadow: var(--shadow);
+  }
+  .unit {
+    display: flex; flex-direction: column; align-items: center;
+    min-width: clamp(70px, 14vw, 140px);
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-weight: 900;
+    font-size: clamp(3rem, 12vw, 9rem);
+    line-height: 1;
+  }
+  .label {
+    margin-top: 8px;
+    font-size: clamp(.75rem, 1.6vw, 1rem);
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    opacity: .85;
+  }
+  .done {
+    font-size: clamp(2rem, 8vw, 5rem);
+    font-weight: 900;
+    text-shadow: var(--shadow);
+  }
+  @media (max-width: 480px) {
+    .timer { gap: 10px; }
+    .unit { min-width: 64px; }
+  }
+</style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <main>
+    <h1>Rocco Gets Home</h1>
+    <div id="timer" class="timer" aria-live="polite">
+      <div class="unit"><span class="num" id="d">00</span><span class="label">Days</span></div>
+      <div class="unit"><span class="num" id="h">00</span><span class="label">Hours</span></div>
+      <div class="unit"><span class="num" id="m">00</span><span class="label">Minutes</span></div>
+      <div class="unit"><span class="num" id="s">00</span><span class="label">Seconds</span></div>
+    </div>
+  </main>
+<script>
+  // Target: Saturday May 30, 2026 at 8:00 PM local time
+  const TARGET = new Date(2026, 4, 30, 20, 0, 0).getTime();
+
+  const pad = n => String(n).padStart(2, "0");
+  const $d = document.getElementById("d");
+  const $h = document.getElementById("h");
+  const $m = document.getElementById("m");
+  const $s = document.getElementById("s");
+  const $timer = document.getElementById("timer");
+
+  function tick() {
+    const diff = TARGET - Date.now();
+    if (diff <= 0) {
+      $timer.innerHTML = '<div class="done">HE’S HOME! 🐶</div>';
+      return false;
+    }
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    $d.textContent = pad(days);
+    $h.textContent = pad(hours);
+    $m.textContent = pad(mins);
+    $s.textContent = pad(secs);
+    return true;
+  }
+
+  if (tick()) setInterval(tick, 1000);
+</script>
+</body>
+</html>
